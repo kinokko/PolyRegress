@@ -4,11 +4,31 @@ import assignment1 as a1
 import numpy as np
 import matplotlib.pyplot as plt
 
+def GetDesignMatrix(degree, inputMatrix):
+    numRows = np.size(inputMatrix, 0)
+    outMatrix = np.ones((numRows, 1))
+    for i in range(1, degree + 1):
+        outMatrix = np.append(outMatrix, np.power(inputMatrix, i), 1)
+    return outMatrix
+def GetW(phi, t):
+    a = np.linalg.pinv(phi)
+    w = np.dot(np.linalg.pinv(phi), t)
+    return w
+def GetPredict(w, phi):
+    predict = np.dot(phi, w)
+    return predict
+def GetRMSE(prediction, target):
+    err = np.subtract(prediction, target)
+    sqrErr = np.power(err, 2)
+    mean = np.mean(sqrErr)
+    rms = np.sqrt(mean)
+    return rms 
+
 (countries, features, values) = a1.load_unicef_data()
 
 targets = values[:,1]
 x = values[:,7:]
-#x = a1.normalize_data(x)
+# x = a1.normalize_data(x)
 
 N_TRAIN = 100;
 x_train = x[0:N_TRAIN,:]
@@ -17,29 +37,25 @@ t_train = targets[0:N_TRAIN]
 t_test = targets[N_TRAIN:]
 
 #TODO: Impelment Linera Basis Function Regression with polynormial basis functions
-degree = 6
-phi_train = np.ones((np.size(x_train, 0), 1))
+train_err = {}
+test_err = {}
+degreeRange = range(1, 30)
 
-# w = [[0 for y in range(np.size(x_train[0]))] for z in range(degree + 1)]
-# w = np.zeros((degree + 1, np.size(x_train[0]), 1))
-for i in range(1, degree + 1):
-    phi_train = np.append(phi_train, np.power(x_train, i), 1)
-
-w = np.dot(np.linalg.pinv(phi_train), t_train)
-print(np.shape(w))
-
-# for i in range(np.size(t_test)):
-#     for j in range(degree + 1):
-#         t_trained[i] = np.add(t_trained[i], np.dot(np.transpose(w[j]), np.transpose(np.power(x_test[i], j))))
-
-# test_err = np.subtract(t_trained, t_test)   
-# print(test_err)
+for degree in degreeRange:
+    phi_train = GetDesignMatrix(degree, x_train)
+    w = GetW(phi_train, t_train)
+    prediction_train = GetPredict(w, phi_train)
+    train_err[degree] = GetRMSE(prediction_train, t_train)
+    phi_test = GetDesignMatrix(degree, x_test)    
+    prediction_test = GetPredict(w, phi_test)    
+    test_err[degree] = GetRMSE(prediction_test, t_test)    
 
 # Produce a plot of results.
-# plt.plot(train_err.keys(), train_err.values())
-# plt.plot(test_err.keys, test_err.values())
+plt.plot(test_err.keys(), test_err.values())
+plt.plot(train_err.keys(), train_err.values())
 plt.ylabel('RMS')
 plt.legend(['Test error','Training error'])
 plt.title('Fit with polynomials, no regularization')
 plt.xlabel('Polynomial degree')
 plt.show()
+
