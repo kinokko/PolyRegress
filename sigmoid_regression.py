@@ -45,7 +45,7 @@ test_err = pr.GetRMSE(predict_test, t_test)
 
 x_train_min = np.asscalar(np.min(x_train))
 x_train_max = np.asscalar(np.max(x_train))
-domain_size = np.size(x_train, 0)
+domain_size = 500
 x_ev = np.linspace(x_train_min, x_train_max, domain_size)
 x_ev_designd = GetDesignMatrix(mu, s, np.reshape(x_ev, (domain_size, 1)))
 y_predict = pr.GetPredict(w, x_ev_designd)

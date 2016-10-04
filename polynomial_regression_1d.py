@@ -55,7 +55,7 @@ for feature in featureRange:
     phi_test = pr.GetDesignMatrix(degree, x_test)
     predict_test = pr.GetPredict(w, phi_test)
 
-    domain_size = np.size(x_train, 0)
+    domain_size = 500
     x_ev = np.linspace(x_min, x_max, domain_size)
     x_ev_designd = pr.GetDesignMatrix(degree, np.reshape(x_ev, (domain_size, 1)))
     y_predict = pr.GetPredict(w, x_ev_designd)

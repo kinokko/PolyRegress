@@ -5,7 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import polynomial_regression_utility as pr
 
-def GetRMSE(prediction, target, currentLamda, w):
+def GetRegularlizedW(currentLamda, phi, target):
+    size = np.size(phi, 1)
+    a = np.dot(np.transpose(phi), phi)
+    b = np.dot(currentLamda, np.identity(size))
+    regularlized = np.add(np.dot(currentLamda, np.identity(size)), np.dot(np.transpose(phi), phi))
+    w = np.dot(np.dot(np.power(regularlized, -1), np.transpose(phi)), target)
+    return w
+
+def GetRegularlizedRMSE(prediction, target, currentLamda, w):
     regularizer = np.dot(currentLamda, np.dot(np.transpose(w), w))
     err = np.add(np.subtract(prediction, target), regularizer)
     sqrErr = np.power(err, 2)
@@ -35,6 +43,8 @@ validate_err = [0, .01, .1, 1, 10, 100 , 1000 , 10000]
 
 for i in range(len(lambdas)):
     current_val_err = range(fold)
+
+    # splite the inputs and targets into training set and validation set
     for current_fold in range(fold):
         x_train_current = np.empty((x_size,))
         x_validate = np.empty((x_size,))
@@ -51,10 +61,10 @@ for i in range(len(lambdas)):
             t_train_current = np.vstack((t_train_current, t_train[j]))
             
         phi_train = pr.GetDesignMatrix(degree, x_train_current)
-        w = pr.GetW(phi_train, t_train_current)
+        w = GetRegularlizedW(lambdas[i], phi_train, t_train_current)
         phi_validate = pr.GetDesignMatrix(degree, x_validate)
         prediction_validate = pr.GetPredict(w, phi_validate)
-        current_val_err[current_fold] = GetRMSE(prediction_validate, t_validate, lambdas[i], w)
+        current_val_err[current_fold] = GetRegularlizedRMSE(prediction_validate, t_validate, lambdas[i], w)
     validate_err[i] = np.mean(current_val_err)
 
 print(validate_err)
@@ -62,6 +72,6 @@ print(np.min(validate_err))
 plt.semilogx(lambdas, validate_err)
 plt.ylabel('RMS')
 plt.legend(['Validation error'])
-plt.title('Fit with polynomials, with regularization')
+plt.title('L2')
 plt.xlabel('Lambda')
 plt.show()

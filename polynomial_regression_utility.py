@@ -9,7 +9,6 @@ def GetDesignMatrix(degree, inputMatrix):
         outMatrix = np.append(outMatrix, np.power(inputMatrix, i), 1)
     return outMatrix
 def GetW(phi, t):
-    a = np.linalg.pinv(phi)
     w = np.dot(np.linalg.pinv(phi), t)
     return w
 def GetPredict(w, phi):

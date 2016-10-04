@@ -9,7 +9,7 @@ import polynomial_regression_utility as pr
 
 targets = values[:,1]
 x = values[:,7:]
-# x = a1.normalize_data(x)
+x = a1.normalize_data(x)
 
 N_TRAIN = 100;
 x_train = x[0:N_TRAIN,:]
