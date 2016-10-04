@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 import polynomial_regression_utility as pr
 
 #This is the only place different
-def GetDesignMatrix(degree, inputMatrix):
+def GetDesignMatrix(mu, s, inputMatrix):
     numRows = np.size(inputMatrix, 0)
     outMatrix = np.ones((numRows, 1))
-    for i in range(1, degree + 1):
-        outMatrix = np.append(outMatrix, np.power(inputMatrix, i), 1)
+    for i in range(len(mu)):
+        np.divide((np.subtract(mu[i], inputMatrix)), s)
+        appender = np.power((np.add(1, np.exp(np.divide((np.subtract(mu[i], inputMatrix)), s)))), -1)
+        outMatrix = np.append(outMatrix, appender, 1)
     return outMatrix
 
 (countries, features, values) = a1.load_unicef_data()
@@ -26,3 +28,32 @@ train_err = {}
 feature = 4
 x_train = x[0:N_TRAIN,feature]
 x_test = x[N_TRAIN:,feature]
+mu = [100,10000]
+s = 2000.0
+
+feature = 11 - 8
+x_train = x[0:N_TRAIN,feature]
+x_test = x[N_TRAIN:,feature]
+phi_train = GetDesignMatrix(mu, s, x_train)
+w = pr.GetW(phi_train, t_train)
+predict_train = pr.GetPredict(w, phi_train)
+train_err = pr.GetRMSE(predict_train, t_train)
+phi_test = GetDesignMatrix(mu, s, x_test)
+predict_test = pr.GetPredict(w, phi_test)
+test_err = pr.GetRMSE(predict_test, t_test)  
+
+
+x_train_min = np.asscalar(np.min(x_train))
+x_train_max = np.asscalar(np.max(x_train))
+domain_size = np.size(x_train, 0)
+x_ev = np.linspace(x_train_min, x_train_max, domain_size)
+x_ev_designd = GetDesignMatrix(mu, s, np.reshape(x_ev, (domain_size, 1)))
+y_predict = pr.GetPredict(w, x_ev_designd)
+plt.plot(x_ev , y_predict)
+# plt.plot(train_err.keys(), train_err.values())
+plt.ylabel('RMS')
+plt.legend(['Test error','Training error'])
+plt.title('Fit with polynomials, no regularization')
+plt.xlabel('Polynomial degree')
+plt.show()
+

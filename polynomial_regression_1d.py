@@ -31,7 +31,7 @@ for feature in featureRange:
     
 
 # Produce a plot of results.
-plt.bar(test_err.keys(), test_err.values(), color = "r")
+plt.bar(test_err.keys(), test_err.values(), color = "r", width = -0.4)
 plt.bar(train_err.keys(), train_err.values(), width = 0.4)
 plt.ylabel('RMS')
 plt.legend(['Test error','Training error'])
