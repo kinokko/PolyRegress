@@ -38,3 +38,30 @@ plt.legend(['Test error','Training error'])
 plt.title('Fit with polynomials, no regularization')
 plt.xlabel('Feature number')
 plt.show()
+
+degree = 3
+featureRange = range(3, 6)
+train_err = range(3,6)
+test_err = range(3, 6)
+for feature in featureRange:
+    x_train = x[0:N_TRAIN,feature]
+    x_test = x[N_TRAIN:,feature]
+    x_min = np.min(np.vstack((x_train, x_test)))
+    x_max = np.max(np.vstack((x_train, x_test)))
+
+    phi_train = pr.GetDesignMatrix(degree, x_train)
+    w = pr.GetW(phi_train, t_train)
+    predict_train = pr.GetPredict(w, phi_train)
+    phi_test = pr.GetDesignMatrix(degree, x_test)
+    predict_test = pr.GetPredict(w, phi_test)
+
+    domain_size = np.size(x_train, 0)
+    x_ev = np.linspace(x_min, x_max, domain_size)
+    x_ev_designd = pr.GetDesignMatrix(degree, np.reshape(x_ev, (domain_size, 1)))
+    y_predict = pr.GetPredict(w, x_ev_designd)
+    plt.plot(x_ev , y_predict)
+    plt.plot(x_train, t_train, "bo", color = "r")
+    plt.plot(x_test, t_test, "bo", color = "r")
+    plt.ylabel('Mortality Plot')
+    plt.legend(["Mortality"])
+    plt.show()
