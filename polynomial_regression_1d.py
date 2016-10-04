@@ -24,10 +24,10 @@ for feature in featureRange:
     phi_train = pr.GetDesignMatrix(3, x_train)
     w = pr.GetW(phi_train, t_train)
     predict_train = pr.GetPredict(w, phi_train)
-    train_err[feature] = pr.GetRMSE(predict_train, t_train)
+    train_err[feature + 8] = pr.GetRMSE(predict_train, t_train)
     phi_test = pr.GetDesignMatrix(3, x_test)
     predict_test = pr.GetPredict(w, phi_test)
-    test_err[feature] = pr.GetRMSE(predict_test, t_test)    
+    test_err[feature + 8] = pr.GetRMSE(predict_test, t_test)    
     
 
 # Produce a plot of results.
