@@ -7,19 +7,9 @@ import polynomial_regression_utility as pr
 
 def GetRegularlizedW(currentLamda, phi, target):
     size = np.size(phi, 1)
-    a = np.dot(np.transpose(phi), phi)
-    b = np.dot(currentLamda, np.identity(size))
-    regularlized = np.add(np.dot(currentLamda, np.identity(size)), np.dot(np.transpose(phi), phi))
-    w = np.dot(np.dot(np.power(regularlized, -1), np.transpose(phi)), target)
+    regularlized = np.add(np.multiply(currentLamda, np.identity(size)), np.dot(np.transpose(phi), phi))
+    w = np.dot(np.dot(np.linalg.inv(regularlized), np.transpose(phi)), target)
     return w
-
-def GetRegularlizedRMSE(prediction, target, currentLamda, w):
-    regularizer = np.dot(currentLamda, np.dot(np.transpose(w), w))
-    err = np.add(np.subtract(prediction, target), regularizer)
-    sqrErr = np.power(err, 2)
-    mean = np.mean(sqrErr)
-    rms = np.sqrt(mean)
-    return rms 
 
 (countries, features, values) = a1.load_unicef_data()
 
@@ -39,32 +29,25 @@ lambdas = [0, .01, .1, 1, 10, 100 , 1000 , 10000]
 fold = 10
 degree = 2
 x_size = np.size(x_train, 1)
-validate_err = [0, .01, .1, 1, 10, 100 , 1000 , 10000]
+validate_err = range(len(lambdas))
 
 for i in range(len(lambdas)):
     current_val_err = range(fold)
 
-    # splite the inputs and targets into training set and validation set
     for current_fold in range(fold):
-        x_train_current = np.empty((x_size,))
-        x_validate = np.empty((x_size,))
-        t_train_current = np.empty((1,))
-        t_validate = np.empty((1,))
-        for j in range(current_fold * N_TRAIN / fold):
-            x_train_current = np.vstack((x_train_current, x_train[j]))
-            t_train_current = np.vstack((t_train_current, t_train[j]))
-        for j in range(current_fold * N_TRAIN / fold, (current_fold + 1) * N_TRAIN / fold):
-            x_validate = np.vstack((x_validate, x_train[j]))
-            t_validate = np.vstack((t_validate, t_train[j]))
-        for j in range((current_fold + 1) * N_TRAIN / fold, N_TRAIN):
-            x_train_current = np.vstack((x_train_current, x_train[j]))
-            t_train_current = np.vstack((t_train_current, t_train[j]))
+        # splite the inputs and targets into training set and validation set        
+        firstBoundary = current_fold * N_TRAIN / fold
+        secondBoundary = (current_fold + 1) * N_TRAIN / fold
+        x_train_current = np.vstack((x_train[:firstBoundary], x_train[secondBoundary:]))
+        t_train_current = np.vstack((t_train[:firstBoundary], t_train[secondBoundary:]))
+        x_validate = x_train[firstBoundary:secondBoundary]
+        t_validate = t_train[firstBoundary:secondBoundary]
             
         phi_train = pr.GetDesignMatrix(degree, x_train_current)
         w = GetRegularlizedW(lambdas[i], phi_train, t_train_current)
         phi_validate = pr.GetDesignMatrix(degree, x_validate)
         prediction_validate = pr.GetPredict(w, phi_validate)
-        current_val_err[current_fold] = GetRegularlizedRMSE(prediction_validate, t_validate, lambdas[i], w)
+        current_val_err[current_fold] = pr.GetRMSE(prediction_validate, t_validate)        
     validate_err[i] = np.mean(current_val_err)
 
 print(validate_err)
