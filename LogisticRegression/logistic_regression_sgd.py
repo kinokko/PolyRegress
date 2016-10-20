@@ -55,17 +55,19 @@ for eta in etas:
   w = np.array([0.1, 0, 0])
 
   for iter in range (0,max_iter):
+
+    index = np.random.randint(np.size(X, 0))
     # Compute output using current w on all data X.
-    y = sps.expit(np.dot(X,w))
+    y = sps.expit(np.dot(X[index],w))
     
     # e is the error, negative log-likelihood (Eqn 4.90)
-    e = -np.mean(np.multiply(t,np.log(y)) + np.multiply((1-t),np.log(1-y)))
+    e = -np.mean(np.multiply(t[index],np.log(y)) + np.multiply((1-t[index]),np.log(1-y)))
 
     # Add this error to the end of error vector.
     e_all.append(e)
 
     # Gradient of the error, using Eqn 4.91
-    grad_e = np.mean(np.multiply((y - t), X.T), axis=1)
+    grad_e = np.multiply((y - t[index]), X[index].T)
 
     # Update w, *subtracting* a step in the error derivative since we're minimizing
     w_old = w
