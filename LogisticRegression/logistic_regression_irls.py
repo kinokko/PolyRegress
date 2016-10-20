@@ -54,6 +54,10 @@ for iter in range (0,max_iter):
   # Compute output using current w on all data X.
   y = sps.expit(np.dot(X,w))
   
+  # Create the diagonal matrix R, and the 2-dimensional vector z 
+  R = np.diag(np.multiply(y, (1-y)))
+  z = np.dot(X, w) - np.dot(np.linalg.inv(R), (y - t))
+
   # e is the error, negative log-likelihood (Eqn 4.90)
   e = -np.mean(np.multiply(t,np.log(y)) + np.multiply((1-t),np.log(1-y)))
 
@@ -61,11 +65,11 @@ for iter in range (0,max_iter):
   e_all.append(e)
 
   # Gradient of the error, using Eqn 4.91
-  grad_e = np.mean(np.multiply((y - t), X.T), axis=1)
+  # grad_e = np.mean(np.multiply((y - t), X.T), axis=1)
 
-  # Update w, *subtracting* a step in the error derivative since we're minimizing
+  # Update w, using 4.99
   w_old = w
-  w = w - eta*grad_e
+  w = np.dot(np.dot(np.dot(np.linalg.inv(np.dot(np.dot(X.T, R), X)), X.T), R), z)
   
   # Plot current separator and data.  Useful for interactive mode / debugging.
   # plt.figure(DATA_FIG)
