@@ -28,7 +28,7 @@ X1 = X[class1]
 class2 = np.where(t==1)
 X2 = X[class2]
 
-# DATA_FIG = 1
+DATA_FIG = 1
 
 # Set up the slope-intercept figure
 # SI_FIG = 2
@@ -59,12 +59,10 @@ for eta in etas:
   for iter in range (0,max_iter):
     np.random.shuffle(indexes)
     for index in indexes:
-      index = np.random.randint(np.size(X, 0))
       # Compute output using current w on all data X.
       y = sps.expit(np.dot(X[index],w))
-      
-      # e is the error, negative log-likelihood (Eqn 4.90)
-      e = -np.mean(np.multiply(t[index],np.log(y)) + np.multiply((1-t[index]),np.log(1-y)))
+      if (y > 1 or y < 0):
+        test = -1
 
       # Gradient of the error, using Eqn 4.91
       grad_e = np.multiply((y - t[index]), X[index].T)
@@ -73,26 +71,34 @@ for eta in etas:
       w_old = w
       w = w - eta*grad_e
       
-      # Plot current separator and data.  Useful for interactive mode / debugging.
-      # plt.figure(DATA_FIG)
-      # plt.clf()
-      # plt.plot(X1[:,0],X1[:,1],'b.')
-      # plt.plot(X2[:,0],X2[:,1],'g.')
-      # a2.draw_sep(w)
-      # plt.axis([-5, 15, -10, 10])
+    
 
       
       # Add next step of separator in m-b space.
       # plt.figure(SI_FIG)
       # a2.plot_mb(w,w_old)
 
-        
-    # Print some information.
-    print 'epoch {0:d}, negative log-likelihood {1:.4f}, w={2}'.format(iter, e, w.T)
+    # Plot current separator and data.  Useful for interactive mode / debugging.
+    # plt.figure(DATA_FIG)
+    # plt.clf()
+    # plt.plot(X1[:,0],X1[:,1],'b.')
+    # plt.plot(X2[:,0],X2[:,1],'g.')
+    # a2.draw_sep(w)
+    # plt.axis([-5, 15, -10, 10])
+    # plt.show()
     
+    
+    # Compute output using current w on all data X.
+    y = sps.expit(np.dot(X,w))
+    
+    # e is the error, negative log-likelihood (Eqn 4.90)
+    e = -np.mean(np.multiply(t,np.log(0.000001 + y)) + np.multiply((1-t),np.log(1.000001-y)))
 
-    # Add error to the end of error vector.
+    # Add this error to the end of error vector.
     e_all.append(e)
+
+    # Print some information.
+    # print 'epoch {0:d}, negative log-likelihood {1:.4f}, w={2}'.format(iter, e, w.T)
 
     # Stop iterating if error doesn't change more than tol.
     if iter>0:
@@ -101,6 +107,15 @@ for eta in etas:
     
   plt.figure(EOI_FIG)  
   plt.plot(e_all)
-
+  print 'epoch {0:d}, negative log-likelihood {1:.4f}, w={2}'.format(iter, e, w.T)
+  
+  # Plot current separator and data.  Useful for interactive mode / debugging.
+  # plt.figure(DATA_FIG)
+  # plt.clf()
+  # plt.plot(X1[:,0],X1[:,1],'b.')
+  # plt.plot(X2[:,0],X2[:,1],'g.')
+  # a2.draw_sep(w)
+  # plt.axis([-5, 15, -10, 10])
+  # plt.show()
 
 plt.show()
