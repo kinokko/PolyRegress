@@ -9,7 +9,7 @@ import assignment2 as a2
 
 
 # Offset for log(0)
-LOG_OFFSET = 0.0000001
+epsilon = 0.00000000000001
 
 # Maximum number of iterations.  Continue until this limit, or when error change is below tol.
 max_iter = 500
@@ -51,6 +51,7 @@ plt.title('Training logistic regression')
 plt.xlabel('Epoch')
 
 indexes = range(np.size(X, 0))
+np.random.shuffle(indexes)
 
 for eta in etas:
   # Error values over all iterations.
@@ -60,7 +61,6 @@ for eta in etas:
   w = np.array([0.1, 0, 0])
 
   for iter in range (0,max_iter):
-    np.random.shuffle(indexes)
     for index in indexes:
       # Compute output using current w on all data X.
       y = sps.expit(np.dot(X[index],w))
@@ -73,9 +73,6 @@ for eta in etas:
       # Update w, *subtracting* a step in the error derivative since we're minimizing
       w_old = w
       w = w - eta*grad_e
-      
-    
-
       
       # Add next step of separator in m-b space.
       # plt.figure(SI_FIG)
@@ -95,7 +92,7 @@ for eta in etas:
     y = sps.expit(np.dot(X,w))
     
     # e is the error, negative log-likelihood (Eqn 4.90)
-    e = -np.mean(np.multiply(t,np.log(LOG_OFFSET + y)) + np.multiply((1-t),np.log(LOG_OFFSET + 1 - y)))
+    e = -np.mean(np.multiply(t,np.log(epsilon + y)) + np.multiply((1-t),np.log(epsilon + 1 - y)))
 
     # Add this error to the end of error vector.
     e_all.append(e)
@@ -110,7 +107,7 @@ for eta in etas:
     
   plt.figure(EOI_FIG)  
   plt.plot(e_all, label = 'eta = {0:.2f}'.format(eta))
-  print 'epoch {0:d}, negative log-likelihood {1:.4f}, w={2}'.format(iter, e, w.T)
+  # print 'epoch {0:d}, negative log-likelihood {1:.4f}, w={2}'.format(iter, e, w.T)
   
   # Plot current separator and data.  Useful for interactive mode / debugging.
   # plt.figure(DATA_FIG)
