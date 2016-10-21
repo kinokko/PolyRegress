@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 import assignment2 as a2
 
 
+# Offset for log(0)
+LOG_OFFSET = 0.0000001
+
 # Maximum number of iterations.  Continue until this limit, or when error change is below tol.
 max_iter = 500
 tol = 0.00001
@@ -40,6 +43,7 @@ DATA_FIG = 1
 # plt.axis([-5, 5, -10, 0])
 
 EOI_FIG = 3
+plot_labels = []
 
 # Set up the error over iterations figure
 plt.figure(EOI_FIG)
@@ -92,7 +96,7 @@ for eta in etas:
     y = sps.expit(np.dot(X,w))
     
     # e is the error, negative log-likelihood (Eqn 4.90)
-    e = -np.mean(np.multiply(t,np.log(0.000001 + y)) + np.multiply((1-t),np.log(1.000001-y)))
+    e = -np.mean(np.multiply(t,np.log(LOG_OFFSET + y)) + np.multiply((1-t),np.log(LOG_OFFSET + 1 - y)))
 
     # Add this error to the end of error vector.
     e_all.append(e)
@@ -107,6 +111,7 @@ for eta in etas:
     
   plt.figure(EOI_FIG)  
   plt.plot(e_all)
+  plot_labels.append('eta = {0:.2f}'.format(eta))
   print 'epoch {0:d}, negative log-likelihood {1:.4f}, w={2}'.format(iter, e, w.T)
   
   # Plot current separator and data.  Useful for interactive mode / debugging.
@@ -118,4 +123,5 @@ for eta in etas:
   # plt.axis([-5, 15, -10, 10])
   # plt.show()
 
+plt.legend(labels = plot_labels)
 plt.show()

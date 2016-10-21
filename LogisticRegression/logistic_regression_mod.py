@@ -40,6 +40,7 @@ X2 = X[class2]
 # plt.axis([-5, 5, -10, 0])
 
 EOI_FIG = 3
+plot_labels = []
 
 # Set up the error over iterations figure
 plt.figure(EOI_FIG)
@@ -95,6 +96,7 @@ for eta in etas:
   
   plt.figure(EOI_FIG)  
   plt.plot(e_all)
+  plot_labels.append('eta = {0:.2f}'.format(eta))
 
-
+plt.legend(labels = plot_labels)
 plt.show()
