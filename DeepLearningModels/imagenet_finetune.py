@@ -19,9 +19,11 @@ IMSIZE = (299, 299)
 
 # TO DO:: Replace these with paths to the downloaded data.
 # Training directory
-train_dir = '/Users/mori/data/sport3/train'
+# train_dir = '/Users/mori/data/sport3/train'
+train_dir = "./Data/sport3/train"
 # Testing directory
-test_dir = '/Users/mori/data/sport3/validation'
+# test_dir = '/Users/mori/data/sport3/validation'
+test_dir = './Data/sport3/validation'
 
 
 # Start with an Inception V3 model, not including the final softmax layer.
@@ -76,7 +78,8 @@ model.save_weights('sport3_pretrain.h5')  # always save your weights after train
 
 
 
-img_path = '/Users/mori/data/sport3/validation/hockey/img_2997.jpg'
+# img_path = '/Users/mori/data/sport3/validation/hockey/img_2997.jpg'
+img_path = './Data/sport3/validation/hockey/img_2997.jpg'
 img = image.load_img(img_path, target_size=IMSIZE)
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
