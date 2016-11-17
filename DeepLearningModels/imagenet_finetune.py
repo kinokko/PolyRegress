@@ -13,6 +13,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential, Model
 from keras.layers import Dense, Activation, Flatten, Dropout
 import inception_v3 as inception
+import imagenet_validation as validator
 
 N_CLASSES = 3
 IMSIZE = (299, 299)
@@ -76,15 +77,15 @@ model.fit_generator(
 model.save_weights('sport3_pretrain.h5')  # always save your weights after training or during training
 
 
-
-
-# img_path = '/Users/mori/data/sport3/validation/hockey/img_2997.jpg'
 img_path = './Data/sport3/validation/hockey/img_2997.jpg'
-img = image.load_img(img_path, target_size=IMSIZE)
-x = image.img_to_array(img)
-x = np.expand_dims(x, axis=0)
+# img = image.load_img(img_path, target_size=IMSIZE)
+# x = image.img_to_array(img)
+# x = np.expand_dims(x, axis=0)
 
-x = inception.preprocess_input(x)
+# x = inception.preprocess_input(x)
 
-preds = model.predict(x)
-print('Predicted:', preds)
+# preds = model.predict(x)
+# print('Predicted:', preds)
+
+# validator.ValidateImg(model, img_path)
+validator.ValidateAllImgs(model)
