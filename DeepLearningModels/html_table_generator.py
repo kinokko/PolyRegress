@@ -12,7 +12,7 @@ AFTER = """</table>
             </html>"""
 
 
-table_headers = []
+table_headers = ["basketball", "hockey", "soccer"]
 datas = []
 
 
@@ -28,15 +28,15 @@ def AsTableRow(content):
     element = "<tr>{0}</tr>".format(str(content))
     return element
 
-def AsImgWithBase64(content):
-    element = "<img src={0}>".format(content)
+def AsImg(content):
+    element = "<img src={0}>".format(str(content))
     return element
 
 def AddClassName(name):
     table_headers.append(name)
 
 def AddData(predict_data):
-    datas.extend(predict_data)
+    datas.append(predict_data)
 
 def ProcessToHtml():
     document = BEFORE
@@ -49,7 +49,7 @@ def ProcessToHtml():
 
     for data in datas:
         element = ""
-        img = AsImgWithBase64(data[0])
+        img = AsImg(data[0])
         element += AsTableData(img)
         for result in data[1:]:
             element += AsTableData(result)
@@ -64,8 +64,6 @@ def ProcessToHtml():
 
 
 # Test Code
-# AddClassName("a")
-# AddClassName("b")
-# AddData([[ "./Data/sport3/validation/hockey/img_2723.jpg",  0.08581778,  0.30274239]])
-# AddData([[ "./Data/sport3/validation/hockey/img_2721.jpg",  0.08581778,  0.30274239]])
-# ProcessToHtml()
+AddData(['./Data/sport3/validation/basketball/img_2164.jpg', 0.34910166, 0.21430533, 0.43659306])
+AddData(['./Data/sport3/validation/basketball/img_2156.jpg', 0.40804267, 0.2676276, 0.32432973])
+ProcessToHtml()
